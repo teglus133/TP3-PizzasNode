@@ -21,14 +21,16 @@ app.get('/pizza',async (req, res) => {
 
 app.get('/pizza/:id', async (req, res) => {
     const pizza = await PizzaService.getById(req.params.id)
+    if (!pizza) {
+        res.status(200).send("No existe esa pizza")
+    }
     res.status(200).send(pizza)
+    
 })
 
 
 
-app.post('/pizza',async (req, res) => {
-    console.log("hola")
-    res.json(req.body)
+app.post('/pizza',async (req, res) => {    
     try {
         await PizzaService.insert(req.body)
         res.status(200).json({ message: 'Pizza creada' })
@@ -38,6 +40,25 @@ app.post('/pizza',async (req, res) => {
     }
 })
 
+app.put('/pizza', async (req, res) => {
+    try {
+        await PizzaService.update(req.body)
+        res.status(200).json({ message: 'Pizza actualizada'})
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({error: 'Fallo el insert'})
+    }
+})
+
+app.delete('/pizza/:id', async (req, res) => {
+    try {
+        await PizzaService.deleteById(req.params.id)
+        res.status(200).json({ message: 'Pizza borrada'})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({error: 'Fallo el delete'})
+    }
+})
 app.get('/error',(req,res) => {
     res.status(404).send('No se encuentra, sorry!')
 })
